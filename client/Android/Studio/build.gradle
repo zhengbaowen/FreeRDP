@@ -21,7 +21,7 @@ if (!hasProperty('RELEASE_STORE_PASSWORD')) {
 ext {
     compileApi = releaseProperties.get('COMPILE_API', 35)
     targetApi = releaseProperties.get('TARGET_API', 35)
-    minApi = releaseProperties.get('MIN_API', 23)
+    minApi = releaseProperties.get('MIN_API', 26)
     toolsVersion = releaseProperties.get('TOOLS_VERSION', '35.0.0')
 
     println '----------------- Project configuration -------------------'

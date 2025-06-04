@@ -38,7 +38,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="rdp" />
-                <data android:scheme="Rdp" />
+                <data android:scheme="rdp" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
