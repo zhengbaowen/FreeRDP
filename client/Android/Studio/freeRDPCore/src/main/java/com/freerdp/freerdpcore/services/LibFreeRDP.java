@@ -330,14 +330,19 @@ public class LibFreeRDP
 		args.add(addFlag("fonts", flags.getFontSmoothing()));
 		args.add(addFlag("aero", flags.getDesktopComposition()));
 
+		Log.e(TAG, "$$$$$$ start to parse bookmark args");
+
 		if (!advanced.getRemoteProgram().isEmpty())
 		{
-			args.add("/shell:" + advanced.getRemoteProgram());
+			args.add("/app:program:" + advanced.getRemoteProgram());
+			Log.e(TAG, "$$$$$$ add remoteapp param:" + "/app:program:" + advanced.getRemoteProgram());
+		} else {
+			Log.e(TAG, "$$$$$$ no remoteapp parameters presents");
 		}
 
 		if (!advanced.getWorkDir().isEmpty())
 		{
-			args.add("/shell-dir:" + advanced.getWorkDir());
+			args.add("/app:workdir:" + advanced.getWorkDir());
 		}
 
 		args.add(addFlag("async-channels", debug.getAsyncChannel()));

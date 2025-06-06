@@ -3792,6 +3792,8 @@ static int parse_app_options(rdpSettings* settings, const COMMAND_LINE_ARGUMENT_
 
 	int rc = CHANNEL_RC_OK;
 	size_t count = 0;
+	WLog_ERR(TAG, "parse app cmd for arg %s\n", arg->Value);
+
 	char** ptr = CommandLineParseCommaSeparatedValues(arg->Value, &count);
 	if (!ptr || (count == 0))
 		rc = COMMAND_LINE_ERROR;
@@ -3822,6 +3824,8 @@ static int parse_app_options(rdpSettings* settings, const COMMAND_LINE_ARGUMENT_
 				const struct app_map* cur = &amap[y];
 				if (option_starts_with(cur->name, val))
 				{
+					WLog_ERR(TAG, "parse app cmd for name %s val %s\n", cur->name, val);
+
 					const char* xval = &val[strlen(cur->name)];
 					if (cur->fkt)
 						rc = cur->fkt(settings, xval);
