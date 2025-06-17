@@ -868,11 +868,21 @@ static BOOL update_recv_window_info_order(rdpUpdate* update, wStream* s,
 			{
 				dump_window_state_order(up->log, "WindowCreate", orderInfo, &windowState);
 				IFCALLRET(window->WindowCreate, result, context, orderInfo, &windowState);
+
+				if (!window->WindowCreate)
+					WLog_ERR(TAG, " $$$$ WindowCreate does not support.\n");
+				else
+					WLog_ERR(TAG, " $$$$ WindowCreate called to draw function addr %p.\n", window->WindowCreate);
 			}
 			else
 			{
 				dump_window_state_order(up->log, "WindowUpdate", orderInfo, &windowState);
 				IFCALLRET(window->WindowUpdate, result, context, orderInfo, &windowState);
+
+				if (!window->WindowUpdate)
+					WLog_ERR(TAG, " $$$$ WindowUpdate does not support.\n");
+				else
+					WLog_ERR(TAG, " $$$$ WindowUpdate called to draw function addr %p.\n", window->WindowUpdate);
 			}
 
 			update_free_window_state(&windowState);

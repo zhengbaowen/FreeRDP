@@ -20,6 +20,7 @@
 #include <freerdp/client/cliprdr.h>
 
 #include "android_event.h"
+#include <freerdp/client/rail.h>
 
 typedef struct
 {
@@ -38,6 +39,9 @@ typedef struct
 	CLIPRDR_FORMAT* serverFormats;
 	CliprdrClientContext* cliprdr;
 	UINT32 clipboardCapabilities;
+
+	BOOL remote_app;
+	RailClientContext* rail;
 } androidContext;
 
 #endif /* FREERDP_CLIENT_ANDROID_FREERDP_H */

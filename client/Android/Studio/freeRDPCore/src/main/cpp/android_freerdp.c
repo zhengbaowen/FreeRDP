@@ -48,6 +48,7 @@
 #include "android_jni_utils.h"
 #include "android_cliprdr.h"
 #include "android_freerdp_jni.h"
+#include "android_rail.h"
 
 #if defined(WITH_GPROF)
 #include "jni/prof.h"
@@ -75,8 +76,10 @@ static void android_OnChannelConnectedEventHandler(void* context,
 	if (strcmp(e->name, CLIPRDR_SVC_CHANNEL_NAME) == 0)
 	{
 		android_cliprdr_init(afc, (CliprdrClientContext*)e->pInterface);
-	}
-	else
+	} else if (strcmp(e->name, RAIL_SVC_CHANNEL_NAME) == 0)
+	{
+		android_rail_init(afc, (RailClientContext*)e->pInterface);
+	} else
 		freerdp_client_OnChannelConnectedEventHandler(context, e);
 }
 
@@ -98,8 +101,10 @@ static void android_OnChannelDisconnectedEventHandler(void* context,
 	if (strcmp(e->name, CLIPRDR_SVC_CHANNEL_NAME) == 0)
 	{
 		android_cliprdr_uninit(afc, (CliprdrClientContext*)e->pInterface);
-	}
-	else
+	} else if (strcmp(e->name, RAIL_SVC_CHANNEL_NAME) == 0)
+	{
+		android_rail_uninit(afc, (CliprdrClientContext*)e->pInterface);
+	} else
 		freerdp_client_OnChannelDisconnectedEventHandler(context, e);
 }
 

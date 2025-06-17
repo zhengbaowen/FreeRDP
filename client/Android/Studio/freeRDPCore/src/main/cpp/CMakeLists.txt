@@ -43,6 +43,8 @@ set(${MODULE_PREFIX}_SRCS
     android_event.h
     android_freerdp.c
     android_freerdp.h
+    android_rail.c
+    android_rail.h
     android_jni_utils.c
     android_jni_utils.h
     android_jni_callback.c
