@@ -285,6 +285,133 @@ UINT android_rail_send_window_focus_event(RailClientContext* context, UINT32 win
 }
 #endif
 
+/*
+ * add rail channel window callback for remote program
+ * create/update.
+ */
+
+/* RemoteApp Core Protocol Extension */
+char* title = NULL;
+
+static BOOL android_rail_window_common(rdpContext* context, const WINDOW_ORDER_INFO* orderInfo,
+	const WINDOW_STATE_ORDER* windowState)
+{
+	WLog_ERR("TODO", "TODO: implement");
+	UINT32 fieldFlags = orderInfo->fieldFlags;
+	bool title_print = false;
+
+	if (fieldFlags & WINDOW_ORDER_STATE_NEW)
+	{
+		/* Ensure window always gets a window title */
+		if (fieldFlags & WINDOW_ORDER_FIELD_TITLE)
+		{
+			union
+			{
+				WCHAR* wc;
+				BYTE* b;
+			} cnv;
+			cnv.b = windowState->titleInfo.string;
+			if (windowState->titleInfo.length > 0)
+			{
+				title = ConvertWCharNToUtf8Alloc(
+					cnv.wc, windowState->titleInfo.length / sizeof(WCHAR), NULL);
+				WLog_ERR(TAG, "$$$ create window for title %s id %u\n", title ? title : "RdpRailWindow", orderInfo->windowId);
+				title_print = true;
+			}
+		}
+
+		if (!title_print)
+			WLog_ERR(TAG, "$$$ create window for title %s id %u\n", "RdpRailWindow", orderInfo->windowId);
+	} else {
+		WLog_ERR(TAG, "$$$ update window for title %s id %u\n", title ? title : "RdpRailWindow", orderInfo->windowId);
+	}
+
+
+	return TRUE;
+}
+
+static BOOL android_rail_window_delete(rdpContext* context, const WINDOW_ORDER_INFO* orderInfo)
+{
+	androidContext* afc = (androidContext*)context;
+	WINPR_ASSERT(afc);
+	WLog_ERR("TODO", "TODO: implement");
+
+	WLog_ERR(TAG, "$$$ delete window for title %s id %u\n", title ? title : "RdpRailWindow", orderInfo->windowId);
+
+	return TRUE;
+}
+
+static BOOL android_rail_window_icon(rdpContext* context, const WINDOW_ORDER_INFO* orderInfo,
+							    const WINDOW_ICON_ORDER* windowIcon)
+{
+	WLog_ERR("TODO", "TODO: implement id %u\n", orderInfo->windowId);
+	return TRUE;
+}
+
+static BOOL android_rail_window_cached_icon(rdpContext* context, const WINDOW_ORDER_INFO* orderInfo,
+	const WINDOW_CACHED_ICON_ORDER* windowCachedIcon)
+{
+	WLog_ERR("TODO", "TODO: implement");
+	return TRUE;
+}
+
+static BOOL android_rail_notify_icon_create(rdpContext* context, const WINDOW_ORDER_INFO* orderInfo,
+	const NOTIFY_ICON_STATE_ORDER* notifyIconState)
+{
+	WLog_ERR("TODO", "TODO: implement");
+	return TRUE;
+}
+
+static BOOL android_rail_notify_icon_update(rdpContext* context, const WINDOW_ORDER_INFO* orderInfo,
+	const NOTIFY_ICON_STATE_ORDER* notifyIconState)
+{
+	WLog_ERR("TODO", "TODO: implement");
+	return TRUE;
+}
+
+static BOOL android_rail_notify_icon_delete(WINPR_ATTR_UNUSED rdpContext* context,
+	WINPR_ATTR_UNUSED const WINDOW_ORDER_INFO* orderInfo)
+{
+	WLog_ERR("TODO", "TODO: implement");
+	return TRUE;
+}
+
+static BOOL
+android_rail_monitored_desktop(WINPR_ATTR_UNUSED rdpContext* context,
+                          WINPR_ATTR_UNUSED const WINDOW_ORDER_INFO* orderInfo,
+                          WINPR_ATTR_UNUSED const MONITORED_DESKTOP_ORDER* monitoredDesktop)
+{
+	WLog_ERR("TODO", "TODO: implement");
+	return TRUE;
+}
+
+static BOOL android_rail_non_monitored_desktop(rdpContext* context,
+                                          WINPR_ATTR_UNUSED const WINDOW_ORDER_INFO* orderInfo)
+{
+	androidContext* afc = (androidContext*)context;
+	android_rail_disable_remoteapp_mode(afc);
+	return TRUE;
+}
+
+ static void android_rail_register_update_callbacks(rdpUpdate* update)
+ {
+	 WINPR_ASSERT(update);
+
+	 rdpWindowUpdate* window = update->window;
+	 WINPR_ASSERT(window);
+
+	 window->WindowCreate = android_rail_window_common;
+	 window->WindowUpdate = android_rail_window_common;
+	 window->WindowDelete = android_rail_window_delete;
+	 window->WindowIcon = android_rail_window_icon;
+	 window->WindowCachedIcon = android_rail_window_cached_icon;
+	 window->NotifyIconCreate = android_rail_notify_icon_create;
+	 window->NotifyIconUpdate = android_rail_notify_icon_update;
+	 window->NotifyIconDelete = android_rail_notify_icon_delete;
+	 window->MonitoredDesktop = android_rail_monitored_desktop;
+	 window->NonMonitoredDesktop = android_rail_non_monitored_desktop;
+ }
+
 int android_rail_init(androidContext* afc, RailClientContext* rail)
 {
 	rdpContext* context = (rdpContext*)afc;
@@ -295,6 +422,7 @@ int android_rail_init(androidContext* afc, RailClientContext* rail)
 		return 0;
 
 	afc->rail = rail;
+	android_rail_register_update_callbacks(context->update);
 	rail->custom = (void*)afc;
 	rail->ServerExecuteResult = android_rail_server_execute_result;
 	rail->ServerSystemParam = android_rail_server_system_param;
